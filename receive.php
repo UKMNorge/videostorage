@@ -26,7 +26,7 @@
 
 require_once('UKMconfig.inc.php');
 
-error_reporting(E_NONE);
+error_reporting(0);
 ini_set('display_errors', 0);
 
 // Used for constant-time string comparison to avoid timing attacks
