@@ -88,7 +88,10 @@ if (!constant_time_str_compare($computed_file_hash, $file_hash)) {
 // If request is invalid, terminate without any indication of what went wrong,
 // do not leak details like that to an attacker
 if (!$valid_request) {
-    $error_response = json_encode(array('message' => 'Invalid request.'));
+    $error_response = json_encode(array(
+        'message' => 'Invalid request.',
+        'success' => false,
+    ));
     http_response_code(400);
     die($error_response);
 }
