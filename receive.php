@@ -17,7 +17,7 @@
 // Clients submitting data to this script need to provide the following:
 //      file_path: The path where the file should be stored, relative to /var/www/ukmno/videos.
 //      file_hash: The SHA-256 hash of the file being submitted (ala hash_file('sha256', $path_to_file))
-//      timestamp: Current time when submitting (date())
+//      timestamp: Current time when submitting (time())
 //      sign: The data above concatanated and signed with the shared key. Sign the following construct:
 //          $msg = "file_path=$file_path&file_hash=$file_hash&timestamp=$timestamp";
 //          $sign = hash_hmac('sha256', $msg, $secret);
