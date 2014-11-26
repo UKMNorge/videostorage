@@ -92,7 +92,8 @@ if (!$valid_request) {
         'message' => 'Invalid request.',
         'success' => false,
     ));
-    http_response_code(400);
+    header( 'HTTP/1.1 400: BAD REQUEST' );
+    #http_response_code(400);
     die($error_response);
 }
 
