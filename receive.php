@@ -29,6 +29,8 @@ require_once('UKMconfig.inc.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
+header('Content-Type: charset=utf-8');
+
 // Used for constant-time string comparison to avoid timing attacks
 function constant_time_str_compare($a, $b) {
     if (!is_string($a) || !is_string($b)) {
@@ -100,7 +102,7 @@ if (!$valid_request) {
 
 // Everything good, continue and save the file
 $base_folder = dirname( __FILE__ ) . DIRECTORY_SEPARATOR
-             . '..' . DIRECTORY_SEPARATOR
+            # . '..' . DIRECTORY_SEPARATOR
              . 'ukmno' . DIRECTORY_SEPARATOR
              . 'videos' . DIRECTORY_SEPARATOR;
 
@@ -125,8 +127,8 @@ $res = move_uploaded_file($temp_filename, $base_folder . $correct_path . $_POST[
 die(
     json_encode(
                  array( 'success'       => $res,
-                        'file_path'     => $file_path,
-                        'file_abs_path' => $base_folder . $correct_path,
+                        'file_path'     => str_replace('\\','/',$file_path),
+                        'file_abs_path' => str_replace('\\','/',$base_folder . $correct_path),
                         'file_name'     => $_POST['file_name']
                       )
                )
