@@ -73,9 +73,9 @@ if (!constant_time_str_compare($computed_sign, $sign)) {
 // for the attachment
 $now = time();
 $time_passed_since_signing = $now - $timestamp;
-$two_min = 60*2;
+$two_min = 60*10;
 if ($time_passed_since_signing > $two_min) {
-    error_log('Aborting, old timestamp');
+    error_log('Aborting, old timestamp. Given '. date('Y-m-d H:i:s',$timestamp) .' @ local time'. date('Y-m-d H:i:s',$now));
     $valid_request = false;
 }
 
