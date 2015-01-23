@@ -68,13 +68,13 @@ if (!constant_time_str_compare($computed_sign, $sign)) {
 
 // Check that timestamp is valid, ie that the request is not being replayed
 // Make sure both servers run ntp or similar to stay in sync
-// We allow up to two minutes of difference, enough to not be too strict about
+// We allow up to ten minutes of difference, enough to not be too strict about
 // clocks being in sync, but not enough for someone to compute hash collisions
 // for the attachment
 $now = time();
 $time_passed_since_signing = $now - $timestamp;
-$two_min = 60*10;
-if ($time_passed_since_signing > $two_min) {
+$max_signing_delay = 60*10;
+if ($time_passed_since_signing > $max_signing_delay) {
     error_log('Aborting, old timestamp. Given '. date('Y-m-d H:i:s',$timestamp) .' @ local time'. date('Y-m-d H:i:s',$now));
     $valid_request = false;
 }
