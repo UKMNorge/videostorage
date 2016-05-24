@@ -123,6 +123,28 @@ $correct_path = str_replace('/', DIRECTORY_SEPARATOR, $file_path);
 // Move file to storage
 $res = move_uploaded_file($temp_filename, $base_folder . $correct_path . $_POST['file_name']);
 
+
+if( strpos( $_POST['file_name'], '_720p' ) !== false ) {
+	error_log('Generate SMIL-file');
+	$SMILpath = str_replace('_720p.mp4', '.smil', $_POST['file_name']);
+	require_once('inc/smil.php');
+	
+	$SMILfile = $base_folder . $correct_path . $SMILpath;
+	
+	error_log('SMILpath: '. $SMILpath );
+	error_log('SMIL: '. $SMILfile );
+	error_log('SMILdata: '. $SMIL );
+
+	
+	
+	$fh = fopen($SMILfile, 'w' );
+	fwrite( $fh, $SMIL );
+	fclose( $fh );
+} else {
+	error_log('Do not generate SMIL-file');
+}
+
+
 // Return data
 die(
     json_encode(
