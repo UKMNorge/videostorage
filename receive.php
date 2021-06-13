@@ -32,7 +32,8 @@ ini_set('display_errors', 0);
 header('Content-Type: charset=utf-8');
 
 // Used for constant-time string comparison to avoid timing attacks
-function constant_time_str_compare($a, $b) {
+function constant_time_str_compare($a, $b)
+{
     if (!is_string($a) || !is_string($b)) {
         return false;
     }
@@ -73,9 +74,9 @@ if (!constant_time_str_compare($computed_sign, $sign)) {
 // for the attachment
 $now = time();
 $time_passed_since_signing = $now - $timestamp;
-$max_signing_delay = 60*10;
+$max_signing_delay = 60 * 10;
 if ($time_passed_since_signing > $max_signing_delay) {
-    error_log('Aborting, old timestamp. Given '. date('Y-m-d H:i:s',$timestamp) .' @ local time'. date('Y-m-d H:i:s',$now));
+    error_log('Aborting, old timestamp. Given ' . date('Y-m-d H:i:s', $timestamp) . ' @ local time' . date('Y-m-d H:i:s', $now));
     $valid_request = false;
 }
 
@@ -94,64 +95,57 @@ if (!$valid_request) {
         'message' => 'Invalid request.',
         'success' => false,
     ));
-    header( 'HTTP/1.1 400: BAD REQUEST' );
+    header('HTTP/1.1 400: BAD REQUEST');
     #http_response_code(400);
     die($error_response);
 }
 
 
 // Everything good, continue and save the file
-$base_folder = dirname( __FILE__ ) . DIRECTORY_SEPARATOR
-            # . '..' . DIRECTORY_SEPARATOR
-             . 'ukmno' . DIRECTORY_SEPARATOR
-             . 'videos' . DIRECTORY_SEPARATOR;
-
-$file_path_parts = explode('/', $file_path);
-
-// Create directory if not exists
-$current_path = '';
-for($i=0; $i < sizeof($file_path_parts); $i++) {
-    $current_path .= $file_path_parts[ $i ] . DIRECTORY_SEPARATOR;
-    if( !is_dir( $base_folder . $current_path ) ) {
-        mkdir( $base_folder . $current_path );
-    }
-}
+$base_folder = dirname(__FILE__) . DIRECTORY_SEPARATOR
+    # . '..' . DIRECTORY_SEPARATOR
+    . 'ukmno' . DIRECTORY_SEPARATOR
+    . 'videos' . DIRECTORY_SEPARATOR;
 
 // Path corrected for windows
 $correct_path = str_replace('/', DIRECTORY_SEPARATOR, $file_path);
+
+// Create folder if not exists
+if (!is_dir(dirname($base_folder . $correct_path))) {
+    mkdir($base_folder . $correct_path, 0755, true);
+}
 
 // Move file to storage
 $res = move_uploaded_file($temp_filename, $base_folder . $correct_path . $_POST['file_name']);
 
 
-if( strpos( $_POST['file_name'], '_720p' ) !== false ) {
-	error_log('Generate SMIL-file');
-	$SMILpath = str_replace('_720p.mp4', '.smil', $_POST['file_name']);
-	require_once('inc/smil.php');
-	
-	$SMILfile = $base_folder . $correct_path . $SMILpath;
-	
-	error_log('SMILpath: '. $SMILpath );
-	error_log('SMIL: '. $SMILfile );
-	error_log('SMILdata: '. $SMIL );
+if (strpos($_POST['file_name'], '_720p') !== false) {
+    error_log('Generate SMIL-file');
+    $SMILpath = str_replace('_720p.mp4', '.smil', $_POST['file_name']);
+    require_once('inc/smil.php');
 
-	
-	
-	$fh = fopen($SMILfile, 'w' );
-	fwrite( $fh, $SMIL );
-	fclose( $fh );
+    $SMILfile = $base_folder . $correct_path . $SMILpath;
+
+    error_log('SMILpath: ' . $SMILpath);
+    error_log('SMIL: ' . $SMILfile);
+    error_log('SMILdata: ' . $SMIL);
+
+
+
+    $fh = fopen($SMILfile, 'w');
+    fwrite($fh, $SMIL);
+    fclose($fh);
 } else {
-	error_log('Do not generate SMIL-file');
+    error_log('Do not generate SMIL-file');
 }
 
 
 // Return data
-die(
-    json_encode(
-                 array( 'success'       => $res,
-                        'file_path'     => str_replace('\\','/',$file_path),
-                        'file_abs_path' => str_replace('\\','/',$base_folder . $correct_path),
-                        'file_name'     => $_POST['file_name']
-                      )
-               )
-    );
+die(json_encode(
+        array(
+            'success'       => $res,
+            'file_path'     => str_replace('\\', '/', $file_path),
+            'file_abs_path' => str_replace('\\', '/', $base_folder . $correct_path),
+            'file_name'     => $_POST['file_name']
+        )
+    ));
